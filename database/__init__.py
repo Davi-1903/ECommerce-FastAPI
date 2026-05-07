@@ -1,5 +1,8 @@
 from sqlmodel import SQLModel, Session, create_engine
-from model import papel, user
+from model import (
+    avaliacao, categoria, endereco, estoque, item_pedido, pagamento,
+    papel, pedido, produto, produto_categoria, usuario_papel, user
+)
 
 DATABASE_URI = 'sqlite:///app.db'
 args = {'check_same_thread': False}

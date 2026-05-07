@@ -4,7 +4,7 @@ from sqlmodel import SQLModel, Session, select
 from database import get_session
 from model.user import Usuario
 
-router = APIRouter(prefix='/user', tags=['user'])
+router = APIRouter(prefix='', tags=['usuários'])
 SessionDep = Annotated[Session, Depends(get_session)]
 
 
@@ -38,7 +38,7 @@ def add_user(session: SessionDep, user: User):
         session.rollback()
         raise HTTPException(
             status_code=400,
-            detail=e
+            detail=str(e)
         )
 
 
@@ -48,7 +48,7 @@ def edit_user(session: SessionDep, id: int, new_user: User):
         user = session.get(Usuario, id)
         if user is None:
             raise HTTPException(
-                status_code=400,
+                status_code=404,
                 detail='Usuário não encontrado'
             )
         user.nome = new_user.nome
@@ -61,7 +61,7 @@ def edit_user(session: SessionDep, id: int, new_user: User):
         session.rollback()
         raise HTTPException(
             status_code=400,
-            detail=e
+            detail=str(e)
         )
 
 
@@ -77,5 +77,5 @@ def delete_user(session: SessionDep, id: int):
         session.rollback()
         raise HTTPException(
             status_code=400,
-            detail=e
+            detail=str(e)
         )
