@@ -1,0 +1,19 @@
+# Variáveis de ambiente e embiente virtual
+.env
+env/
+.env/
+venv/
+.venv/
+ENV/
+
+# Arquivos cache do Python
+__pycache__/
+*.pyc
+
+# IDLE
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# Banco de dados
+*.db
