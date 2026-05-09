@@ -1,5 +1,5 @@
-CREATE DATABASE ecommerce;
-USE ecommerce;
+CREATE DATABASE db_ecommerce;
+USE db_ecommerce;
 
 CREATE TABLE usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,

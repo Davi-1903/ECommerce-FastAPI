@@ -1,11 +1,13 @@
 from typing import Annotated, Sequence
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import SQLModel, Session, select
+from argon2 import PasswordHasher
 from database import get_session
 from model.user import Usuario
 
 router = APIRouter(prefix='', tags=['usuários'])
 SessionDep = Annotated[Session, Depends(get_session)]
+ph = PasswordHasher()
 
 
 class User(SQLModel):
@@ -27,7 +29,7 @@ def add_user(session: SessionDep, user: User):
         new_user = Usuario(
             nome=user.nome,
             email=user.email,
-            senha_hash=user.senha,
+            senha_hash=ph.hash(user.senha),
         )
         session.add(new_user)
         session.commit()
