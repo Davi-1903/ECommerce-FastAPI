@@ -27,50 +27,50 @@ class AvaliacaoInput(SQLModel):
 # --------------------------------------- Endpoints ---------------------------------------
 
 @router.get('/endereco', response_model=Sequence[Endereco])
-def get_addresses(session: SessionDep):
+def get_endereco(session: SessionDep):
     return session.exec(select(Endereco)).all()
 
 
-@router.get('/endereco/{address_id}', response_model=Endereco)
-def get_address(address_id: int, session: SessionDep):
-    address = session.get(Endereco, address_id)
+@router.get('/endereco/{endereco_id}', response_model=Endereco)
+def get_endereco(session: SessionDep, endereco_id: int):
+    address = session.get(Endereco, endereco_id)
     if not address:
         raise HTTPException(status_code=404, detail='Endereço não encontrado')
     return address
 
 
 @router.post('/endereco', response_model=Endereco)
-def add_address(address: EnderecoInput, session: SessionDep):
-    new_address = Endereco(
-        usuario_id=address.usuario_id,
-        rua=address.rua,
-        cidade=address.cidade,
-        estado=address.estado,
-        cep=address.cep,
+def add_endereco(session: SessionDep, endereco: EnderecoInput):
+    new_endereco = Endereco(
+        usuario_id=endereco.usuario_id,
+        rua=endereco.rua,
+        cidade=endereco.cidade,
+        estado=endereco.estado,
+        cep=endereco.cep,
     )
-    session.add(new_address)
+    session.add(new_endereco)
     session.commit()
-    session.refresh(new_address)
-    return new_address
+    session.refresh(new_endereco)
+    return new_endereco
 
 
 @router.put('/endereco/{id}', response_model=Endereco)
-def edit_address(id: int, address: EnderecoInput, session: SessionDep):
+def edit_endereco(session: SessionDep, id: int, endereco: EnderecoInput):
     existing = session.get(Endereco, id)
     if not existing:
         raise HTTPException(status_code=404, detail='Endereço não encontrado')
-    existing.usuario_id = address.usuario_id
-    existing.rua = address.rua
-    existing.cidade = address.cidade
-    existing.estado = address.estado
-    existing.cep = address.cep
+    existing.usuario_id = endereco.usuario_id
+    existing.rua = endereco.rua
+    existing.cidade = endereco.cidade
+    existing.estado = endereco.estado
+    existing.cep = endereco.cep
     session.commit()
     session.refresh(existing)
     return existing
 
 
 @router.delete('/endereco/{id}', response_model=Endereco)
-def delete_address(id: int, session: SessionDep):
+def delete_endereco(session: SessionDep, id: int):
     existing = session.get(Endereco, id)
     if not existing:
         raise HTTPException(status_code=404, detail='Endereço não encontrado')
@@ -85,7 +85,7 @@ def get_reviews(session: SessionDep):
 
 
 @router.get('/reviews/{id}', response_model=Avaliacao)
-def get_review(id: int, session: SessionDep):
+def get_review(session: SessionDep, id: int):
     review = session.get(Avaliacao, id)
     if not review:
         raise HTTPException(status_code=404, detail='Avaliação não encontrada')
@@ -93,7 +93,7 @@ def get_review(id: int, session: SessionDep):
 
 
 @router.post('/reviews', response_model=Avaliacao)
-def add_review(review: AvaliacaoInput, session: SessionDep):
+def add_review(session: SessionDep, review: AvaliacaoInput):
     new_review = Avaliacao(
         usuario_id=review.usuario_id,
         produto_id=review.produto_id,
@@ -107,7 +107,7 @@ def add_review(review: AvaliacaoInput, session: SessionDep):
 
 
 @router.put('/reviews/{id}', response_model=Avaliacao)
-def edit_review(id: int, review: AvaliacaoInput, session: SessionDep):
+def edit_review(session: SessionDep, id: int, review: AvaliacaoInput):
     existing = session.get(Avaliacao, id)
     if not existing:
         raise HTTPException(status_code=404, detail='Avaliação não encontrada')
@@ -121,7 +121,7 @@ def edit_review(id: int, review: AvaliacaoInput, session: SessionDep):
 
 
 @router.delete('/reviews/{id}', response_model=Avaliacao)
-def delete_review(id: int, session: SessionDep):
+def delete_review(session: SessionDep, id: int):
     existing = session.get(Avaliacao, id)
     if not existing:
         raise HTTPException(status_code=404, detail='Avaliação não encontrada')

@@ -21,40 +21,40 @@ class UsuarioPapelInput(SQLModel):
 # --------------------------------------- Endpoints ---------------------------------------
 
 @router.get('/papeis', response_model=Sequence[Papel])
-def get_roles(session: SessionDep):
+def get_papeis(session: SessionDep):
     return session.exec(select(Papel)).all()
 
 
 @router.get('/papeis/{id}', response_model=Papel)
-def get_role(id: int, session: SessionDep):
-    role = session.get(Papel, id)
-    if not role:
+def get_papel(session: SessionDep, id: int):
+    papel = session.get(Papel, id)
+    if not papel:
         raise HTTPException(status_code=404, detail='Papel não encontrado')
-    return role
+    return papel
 
 
 @router.post('/papeis', response_model=Papel)
-def add_role(role: PapelInput, session: SessionDep):
-    new_role = Papel(nome=role.nome)
-    session.add(new_role)
+def add_papel(session: SessionDep, papel: PapelInput):
+    new_papel = Papel(nome=papel.nome)
+    session.add(new_papel)
     session.commit()
-    session.refresh(new_role)
-    return new_role
+    session.refresh(new_papel)
+    return new_papel
 
 
 @router.put('/papeis/{id}', response_model=Papel)
-def edit_role(id: int, role: PapelInput, session: SessionDep):
+def edit_papel(session: SessionDep, id: int, papel: PapelInput):
     existing = session.get(Papel, id)
     if not existing:
         raise HTTPException(status_code=404, detail='Papel não encontrado')
-    existing.nome = role.nome
+    existing.nome = papel.nome
     session.commit()
     session.refresh(existing)
     return existing
 
 
 @router.delete('/papeis/{id}', response_model=Papel)
-def delete_role(id: int, session: SessionDep):
+def delete_papel(session: SessionDep, id: int):
     existing = session.get(Papel, id)
     if not existing:
         raise HTTPException(status_code=404, detail='Papel não encontrado')
@@ -64,12 +64,12 @@ def delete_role(id: int, session: SessionDep):
 
 
 @router.get('/user-papeis', response_model=Sequence[UsuarioPapel])
-def get_user_roles(session: SessionDep):
+def get_user_papeis(session: SessionDep):
     return session.exec(select(UsuarioPapel)).all()
 
 
 @router.post('/user-papeis', response_model=UsuarioPapel)
-def add_user_role(relation: UsuarioPapelInput, session: SessionDep):
+def add_user_papel(session: SessionDep, relation: UsuarioPapelInput):
     new_relation = UsuarioPapel(
         usuario_id=relation.usuario_id,
         papel_id=relation.papel_id,
@@ -84,7 +84,7 @@ def add_user_role(relation: UsuarioPapelInput, session: SessionDep):
 
 
 @router.delete('/user-papeis/{usuario_id}/{papel_id}', response_model=UsuarioPapel)
-def delete_user_role(usuario_id: int, papel_id: int, session: SessionDep):
+def delete_user_papel(session: SessionDep, usuario_id: int, papel_id: int):
     relation = session.get(UsuarioPapel, (usuario_id, papel_id))
     if not relation:
         raise HTTPException(status_code=404, detail='Relação usuário-papel não encontrada')
