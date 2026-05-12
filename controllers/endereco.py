@@ -41,42 +41,57 @@ def get_endereco(session: SessionDep, endereco_id: int):
 
 @router.post('/endereco', response_model=Endereco)
 def add_endereco(session: SessionDep, endereco: EnderecoInput):
-    new_endereco = Endereco(
-        usuario_id=endereco.usuario_id,
-        rua=endereco.rua,
-        cidade=endereco.cidade,
-        estado=endereco.estado,
-        cep=endereco.cep,
-    )
-    session.add(new_endereco)
-    session.commit()
-    session.refresh(new_endereco)
-    return new_endereco
+    try:
+        new_endereco = Endereco(
+            usuario_id=endereco.usuario_id,
+            rua=endereco.rua,
+            cidade=endereco.cidade,
+            estado=endereco.estado,
+            cep=endereco.cep,
+        )
+        session.add(new_endereco)
+        session.commit()
+        session.refresh(new_endereco)
+        return new_endereco
+    
+    except Exception as e:
+        session.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.put('/endereco/{id}', response_model=Endereco)
 def edit_endereco(session: SessionDep, id: int, endereco: EnderecoInput):
-    existing = session.get(Endereco, id)
-    if not existing:
-        raise HTTPException(status_code=404, detail='Endereço não encontrado')
-    existing.usuario_id = endereco.usuario_id
-    existing.rua = endereco.rua
-    existing.cidade = endereco.cidade
-    existing.estado = endereco.estado
-    existing.cep = endereco.cep
-    session.commit()
-    session.refresh(existing)
-    return existing
+    try:
+        existing = session.get(Endereco, id)
+        if not existing:
+            raise HTTPException(status_code=404, detail='Endereço não encontrado')
+        existing.usuario_id = endereco.usuario_id
+        existing.rua = endereco.rua
+        existing.cidade = endereco.cidade
+        existing.estado = endereco.estado
+        existing.cep = endereco.cep
+        session.commit()
+        session.refresh(existing)
+        return existing
+    
+    except Exception as e:
+        session.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.delete('/endereco/{id}', response_model=Endereco)
 def delete_endereco(session: SessionDep, id: int):
-    existing = session.get(Endereco, id)
-    if not existing:
-        raise HTTPException(status_code=404, detail='Endereço não encontrado')
-    session.delete(existing)
-    session.commit()
-    return existing
+    try:
+        existing = session.get(Endereco, id)
+        if not existing:
+            raise HTTPException(status_code=404, detail='Endereço não encontrado')
+        session.delete(existing)
+        session.commit()
+        return existing
+    
+    except Exception as e:
+        session.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get('/reviews', response_model=Sequence[Avaliacao])
@@ -94,37 +109,52 @@ def get_review(session: SessionDep, id: int):
 
 @router.post('/reviews', response_model=Avaliacao)
 def add_review(session: SessionDep, review: AvaliacaoInput):
-    new_review = Avaliacao(
-        usuario_id=review.usuario_id,
-        produto_id=review.produto_id,
-        nota=review.nota,
-        comentario=review.comentario,
-    )
-    session.add(new_review)
-    session.commit()
-    session.refresh(new_review)
-    return new_review
+    try:
+        new_review = Avaliacao(
+            usuario_id=review.usuario_id,
+            produto_id=review.produto_id,
+            nota=review.nota,
+            comentario=review.comentario,
+        )
+        session.add(new_review)
+        session.commit()
+        session.refresh(new_review)
+        return new_review
+
+    except Exception as e:
+        session.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.put('/reviews/{id}', response_model=Avaliacao)
 def edit_review(session: SessionDep, id: int, review: AvaliacaoInput):
-    existing = session.get(Avaliacao, id)
-    if not existing:
-        raise HTTPException(status_code=404, detail='Avaliação não encontrada')
-    existing.usuario_id = review.usuario_id
-    existing.produto_id = review.produto_id
-    existing.nota = review.nota
-    existing.comentario = review.comentario
-    session.commit()
-    session.refresh(existing)
-    return existing
+    try:
+        existing = session.get(Avaliacao, id)
+        if not existing:
+            raise HTTPException(status_code=404, detail='Avaliação não encontrada')
+        existing.usuario_id = review.usuario_id
+        existing.produto_id = review.produto_id
+        existing.nota = review.nota
+        existing.comentario = review.comentario
+        session.commit()
+        session.refresh(existing)
+        return existing
+    
+    except Exception as e:
+        session.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.delete('/reviews/{id}', response_model=Avaliacao)
 def delete_review(session: SessionDep, id: int):
-    existing = session.get(Avaliacao, id)
-    if not existing:
-        raise HTTPException(status_code=404, detail='Avaliação não encontrada')
-    session.delete(existing)
-    session.commit()
-    return existing
+    try:
+        existing = session.get(Avaliacao, id)
+        if not existing:
+            raise HTTPException(status_code=404, detail='Avaliação não encontrada')
+        session.delete(existing)
+        session.commit()
+        return existing
+    
+    except Exception as e:
+        session.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
