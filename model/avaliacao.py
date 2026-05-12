@@ -1,11 +1,12 @@
 from datetime import datetime, timezone
+from typing import Optional
 from sqlmodel import Field, SQLModel
 
 
 class Avaliacao(SQLModel, table=True):
-    __tablename__ = 'avaliacoes'
+    __tablename__ = 'avaliacoes' # type: ignore
 
-    id: int | None = Field(default=None, primary_key=True)
+    id: Optional[int] = Field(default=None, primary_key=True)
     usuario_id: int = Field(foreign_key='usuarios.id')
     produto_id: int = Field(foreign_key='produtos.id')
     nota: int

@@ -1,11 +1,12 @@
 from datetime import datetime, timezone
+from typing import Optional
 from sqlmodel import Field, SQLModel
 
 
 class Pedido(SQLModel, table=True):
-    __tablename__ = 'pedidos'
+    __tablename__ = 'pedidos' # type: ignore
 
-    id: int | None = Field(default=None, primary_key=True)
+    id: Optional[int] = Field(default=None, primary_key=True)
     usuario_id: int = Field(foreign_key='usuarios.id')
     total: float
     status: str = Field(max_length=50)
