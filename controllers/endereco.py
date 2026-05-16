@@ -2,8 +2,8 @@ from typing import Annotated, Sequence
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import SQLModel, Session, select
 from database import get_session
-from model.endereco import Endereco
-from model.avaliacao import Avaliacao
+from models.endereco import Endereco
+from models.avaliacao import Avaliacao
 
 router = APIRouter(prefix='', tags=['endereços'])
 SessionDep = Annotated[Session, Depends(get_session)]
@@ -25,6 +25,7 @@ class AvaliacaoInput(SQLModel):
 
 
 # --------------------------------------- Endpoints ---------------------------------------
+
 
 @router.get('/endereco', response_model=Sequence[Endereco])
 def get_endereco(session: SessionDep):
@@ -53,7 +54,7 @@ def add_endereco(session: SessionDep, endereco: EnderecoInput):
         session.commit()
         session.refresh(new_endereco)
         return new_endereco
-    
+
     except Exception as e:
         session.rollback()
         raise HTTPException(status_code=500, detail=str(e))
@@ -73,7 +74,7 @@ def edit_endereco(session: SessionDep, id: int, endereco: EnderecoInput):
         session.commit()
         session.refresh(existing)
         return existing
-    
+
     except Exception as e:
         session.rollback()
         raise HTTPException(status_code=500, detail=str(e))
@@ -88,7 +89,7 @@ def delete_endereco(session: SessionDep, id: int):
         session.delete(existing)
         session.commit()
         return existing
-    
+
     except Exception as e:
         session.rollback()
         raise HTTPException(status_code=500, detail=str(e))
@@ -139,7 +140,7 @@ def edit_review(session: SessionDep, id: int, review: AvaliacaoInput):
         session.commit()
         session.refresh(existing)
         return existing
-    
+
     except Exception as e:
         session.rollback()
         raise HTTPException(status_code=500, detail=str(e))
@@ -154,7 +155,7 @@ def delete_review(session: SessionDep, id: int):
         session.delete(existing)
         session.commit()
         return existing
-    
+
     except Exception as e:
         session.rollback()
         raise HTTPException(status_code=500, detail=str(e))

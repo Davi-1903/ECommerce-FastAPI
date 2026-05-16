@@ -4,7 +4,7 @@ from sqlmodel import Field, SQLModel
 
 
 class Pedido(SQLModel, table=True):
-    __tablename__ = 'pedidos' # type: ignore
+    __tablename__ = 'pedidos'  # type: ignore
 
     id: Optional[int] = Field(default=None, primary_key=True)
     usuario_id: int = Field(foreign_key='usuarios.id')

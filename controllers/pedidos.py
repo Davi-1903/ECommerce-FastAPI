@@ -2,9 +2,9 @@ from typing import Annotated, Sequence
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import SQLModel, Session, select
 from database import get_session
-from model.pedido import Pedido
-from model.item_pedido import ItemPedido
-from model.pagamento import Pagamento
+from models.pedido import Pedido
+from models.item_pedido import ItemPedido
+from models.pagamento import Pagamento
 
 router = APIRouter(prefix='', tags=['pedidos'])
 SessionDep = Annotated[Session, Depends(get_session)]
@@ -33,6 +33,7 @@ class PagamentoInput(SQLModel):
 
 # --------------------------------------- Endpoints ---------------------------------------
 
+
 @router.get('/pedidos', response_model=Sequence[Pedido])
 def get_pedidos(session: SessionDep):
     return session.exec(select(Pedido)).all()
@@ -49,12 +50,14 @@ def get_pedido(session: SessionDep, id: int):
 @router.post('/pedidos', response_model=Pedido)
 def add_pedido(session: SessionDep, pedido: PedidoInput):
     try:
-        new_pedido = Pedido(usuario_id=pedido.usuario_id, total=pedido.total, status=pedido.status)
+        new_pedido = Pedido(
+            usuario_id=pedido.usuario_id, total=pedido.total, status=pedido.status
+        )
         session.add(new_pedido)
         session.commit()
         session.refresh(new_pedido)
         return new_pedido
-    
+
     except Exception as e:
         session.rollback()
         raise HTTPException(status_code=500, detail=str(e))
@@ -87,7 +90,7 @@ def delete_pedido(session: SessionDep, id: int):
         session.delete(existing)
         session.commit()
         return existing
-    
+
     except Exception as e:
         session.rollback()
         raise HTTPException(status_code=500, detail=str(e))
@@ -119,7 +122,7 @@ def add_pedido_item(session: SessionDep, item: ItemPedidoInput):
         session.commit()
         session.refresh(new_item)
         return new_item
-    
+
     except Exception as e:
         session.rollback()
         raise HTTPException(status_code=500, detail=str(e))
@@ -138,7 +141,7 @@ def edit_pedido_item(session: SessionDep, id: int, item: ItemPedidoInput):
         session.commit()
         session.refresh(existing)
         return existing
-    
+
     except Exception as e:
         session.rollback()
         raise HTTPException(status_code=500, detail=str(e))
@@ -153,7 +156,7 @@ def delete_pedido_item(session: SessionDep, id: int):
         session.delete(existing)
         session.commit()
         return existing
-    
+
     except Exception as e:
         session.rollback()
         raise HTTPException(status_code=500, detail=str(e))
@@ -186,7 +189,7 @@ def add_pagamento(session: SessionDep, pagamento: PagamentoInput):
         session.commit()
         session.refresh(new_pagamento)
         return new_pagamento
-    
+
     except Exception as e:
         session.rollback()
         raise HTTPException(status_code=500, detail=str(e))
@@ -221,7 +224,7 @@ def delete_pagamento(session: SessionDep, id: int):
         session.delete(existing)
         session.commit()
         return existing
-    
+
     except Exception as e:
         session.rollback()
         raise HTTPException(status_code=500, detail=str(e))

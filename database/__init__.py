@@ -1,8 +1,18 @@
 from sqlmodel import SQLModel, Session, create_engine
 from utils import get_env
-from model import (
-    avaliacao, categoria, endereco, estoque, item_pedido, pagamento,
-    papel, pedido, produto, produto_categoria, usuario_papel, user
+from models import (
+    avaliacao,
+    categoria,
+    endereco,
+    estoque,
+    item_pedido,
+    pagamento,
+    papel,
+    pedido,
+    produto,
+    produto_categoria,
+    usuario_papel,
+    user,
 )
 
 DATABASE_URI = get_env('DATABASE_URI')

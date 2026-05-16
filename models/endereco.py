@@ -3,7 +3,7 @@ from sqlmodel import Field, SQLModel
 
 
 class Endereco(SQLModel, table=True):
-    __tablename__ = 'enderecos' # type: ignore
+    __tablename__ = 'enderecos'  # type: ignore
 
     id: Optional[int] = Field(default=None, primary_key=True)
     usuario_id: int = Field(foreign_key='usuarios.id')

@@ -2,8 +2,8 @@ from typing import Annotated, Sequence
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import SQLModel, Session, select
 from database import get_session
-from model.papel import Papel
-from model.usuario_papel import UsuarioPapel
+from models.papel import Papel
+from models.usuario_papel import UsuarioPapel
 
 router = APIRouter(prefix='', tags=['papeis'])
 SessionDep = Annotated[Session, Depends(get_session)]
@@ -19,6 +19,7 @@ class UsuarioPapelInput(SQLModel):
 
 
 # --------------------------------------- Endpoints ---------------------------------------
+
 
 @router.get('/papeis', response_model=Sequence[Papel])
 def get_papeis(session: SessionDep):
@@ -41,7 +42,7 @@ def add_papel(session: SessionDep, papel: PapelInput):
         session.commit()
         session.refresh(new_papel)
         return new_papel
-    
+
     except Exception as e:
         session.rollback()
         raise HTTPException(status_code=500, detail=str(e))
@@ -97,7 +98,7 @@ def add_user_papel(session: SessionDep, relation: UsuarioPapelInput):
             session.rollback()
             raise HTTPException(status_code=400, detail=str(e))
         return new_relation
-    
+
     except Exception as e:
         session.rollback()
         raise HTTPException(status_code=500, detail=str(e))
@@ -108,7 +109,9 @@ def delete_user_papel(session: SessionDep, usuario_id: int, papel_id: int):
     try:
         relation = session.get(UsuarioPapel, (usuario_id, papel_id))
         if not relation:
-            raise HTTPException(status_code=404, detail='Relação usuário-papel não encontrada')
+            raise HTTPException(
+                status_code=404, detail='Relação usuário-papel não encontrada'
+            )
         session.delete(relation)
         session.commit()
         return relation

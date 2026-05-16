@@ -3,12 +3,11 @@ from typing import Optional
 from sqlmodel import Field, SQLModel
 
 
-class Avaliacao(SQLModel, table=True):
-    __tablename__ = 'avaliacoes' # type: ignore
+class Usuario(SQLModel, table=True):
+    __tablename__ = 'usuarios'  # type: ignore
 
     id: Optional[int] = Field(default=None, primary_key=True)
-    usuario_id: int = Field(foreign_key='usuarios.id')
-    produto_id: int = Field(foreign_key='produtos.id')
-    nota: int
-    comentario: str | None = None
+    nome: str = Field(max_length=100)
+    email: str = Field(max_length=150, unique=True)
+    senha_hash: str = Field(max_length=255)
     criado_em: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))

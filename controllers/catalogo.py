@@ -2,10 +2,10 @@ from typing import Annotated, Sequence
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import SQLModel, Session, select
 from database import get_session
-from model.produto import Produto
-from model.categoria import Categoria
-from model.produto_categoria import ProdutoCategoria
-from model.estoque import Estoque
+from models.produto import Produto
+from models.categoria import Categoria
+from models.produto_categoria import ProdutoCategoria
+from models.estoque import Estoque
 
 router = APIRouter(prefix='', tags=['catálogos'])
 SessionDep = Annotated[Session, Depends(get_session)]
@@ -33,6 +33,7 @@ class EstoqueInput(SQLModel):
 
 # --------------------------------------- Endpoints ---------------------------------------
 
+
 @router.get('/produtos', response_model=Sequence[Produto])
 def get_produtos(session: SessionDep):
     return session.exec(select(Produto)).all()
@@ -49,7 +50,9 @@ def get_produto(session: SessionDep, id: int):
 @router.post('/produtos', response_model=Produto)
 def add_produto(session: SessionDep, produto: ProdutoInput):
     try:
-        new_produto = Produto(nome=produto.nome, descricao=produto.descricao, preco=produto.preco)
+        new_produto = Produto(
+            nome=produto.nome, descricao=produto.descricao, preco=produto.preco
+        )
         session.add(new_produto)
         session.commit()
         session.refresh(new_produto)
@@ -87,7 +90,7 @@ def delete_produto(session: SessionDep, id: int):
         session.delete(existing)
         session.commit()
         return existing
-    
+
     except Exception as e:
         session.rollback()
         raise HTTPException(status_code=500, detail=str(e))
@@ -114,7 +117,7 @@ def add_categoria(session: SessionDep, categoria: CategoriaInput):
         session.commit()
         session.refresh(new_categoria)
         return new_categoria
-    
+
     except Exception as e:
         session.rollback()
         raise HTTPException(status_code=500, detail=str(e))
@@ -130,7 +133,7 @@ def edit_categoria(session: SessionDep, id: int, categoria: CategoriaInput):
         session.commit()
         session.refresh(existing)
         return existing
-    
+
     except Exception as e:
         session.rollback()
         raise HTTPException(status_code=500, detail=str(e))
@@ -145,7 +148,7 @@ def delete_categoria(session: SessionDep, id: int):
         session.delete(existing)
         session.commit()
         return existing
-    
+
     except Exception as e:
         session.rollback()
         raise HTTPException(status_code=500, detail=str(e))
@@ -159,7 +162,9 @@ def get_produto_categorias(session: SessionDep):
 @router.post('/produto-categorias', response_model=ProdutoCategoria)
 def add_produto_categoria(session: SessionDep, relation: ProdutoCategoriaInput):
     try:
-        new_relation = ProdutoCategoria(produto_id=relation.produto_id, categoria_id=relation.categoria_id)
+        new_relation = ProdutoCategoria(
+            produto_id=relation.produto_id, categoria_id=relation.categoria_id
+        )
         session.add(new_relation)
         try:
             session.commit()
@@ -167,22 +172,26 @@ def add_produto_categoria(session: SessionDep, relation: ProdutoCategoriaInput):
             session.rollback()
             raise HTTPException(status_code=400, detail=str(e))
         return new_relation
-    
+
     except Exception as e:
         session.rollback()
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.delete('/produto-categorias/{produto_id}/{categoria_id}', response_model=ProdutoCategoria)
+@router.delete(
+    '/produto-categorias/{produto_id}/{categoria_id}', response_model=ProdutoCategoria
+)
 def delete_produto_categoria(session: SessionDep, produto_id: int, categoria_id: int):
     try:
         relation = session.get(ProdutoCategoria, (produto_id, categoria_id))
         if not relation:
-            raise HTTPException(status_code=404, detail='Relação produto-categoria não encontrada')
+            raise HTTPException(
+                status_code=404, detail='Relação produto-categoria não encontrada'
+            )
         session.delete(relation)
         session.commit()
         return relation
-    
+
     except Exception as e:
         session.rollback()
         raise HTTPException(status_code=500, detail=str(e))
@@ -197,14 +206,18 @@ def get_estoque(session: SessionDep):
 def get_estoque_item(session: SessionDep, estoque_id: int):
     estoque = session.get(Estoque, estoque_id)
     if not estoque:
-        raise HTTPException(status_code=404, detail='Registro de estoque não encontrado')
+        raise HTTPException(
+            status_code=404, detail='Registro de estoque não encontrado'
+        )
     return estoque
 
 
 @router.post('/estoque', response_model=Estoque)
 def add_estoque(session: SessionDep, estoque: EstoqueInput):
     try:
-        new_estoque = Estoque(produto_id=estoque.produto_id, quantidade=estoque.quantidade)
+        new_estoque = Estoque(
+            produto_id=estoque.produto_id, quantidade=estoque.quantidade
+        )
         session.add(new_estoque)
         try:
             session.commit()
@@ -213,7 +226,7 @@ def add_estoque(session: SessionDep, estoque: EstoqueInput):
             raise HTTPException(status_code=400, detail=str(e))
         session.refresh(new_estoque)
         return new_estoque
-    
+
     except Exception as e:
         session.rollback()
         raise HTTPException(status_code=500, detail=str(e))
@@ -224,13 +237,15 @@ def edit_estoque(session: SessionDep, id: int, estoque: EstoqueInput):
     try:
         existing = session.get(Estoque, id)
         if not existing:
-            raise HTTPException(status_code=404, detail='Registro de estoque não encontrado')
+            raise HTTPException(
+                status_code=404, detail='Registro de estoque não encontrado'
+            )
         existing.produto_id = estoque.produto_id
         existing.quantidade = estoque.quantidade
         session.commit()
         session.refresh(existing)
         return existing
-    
+
     except Exception as e:
         session.rollback()
         raise HTTPException(status_code=500, detail=str(e))
@@ -241,11 +256,13 @@ def delete_estoque(session: SessionDep, id: int):
     try:
         existing = session.get(Estoque, id)
         if not existing:
-            raise HTTPException(status_code=404, detail='Registro de estoque não encontrado')
+            raise HTTPException(
+                status_code=404, detail='Registro de estoque não encontrado'
+            )
         session.delete(existing)
         session.commit()
         return existing
-    
+
     except Exception as e:
         session.rollback()
         raise HTTPException(status_code=500, detail=str(e))
