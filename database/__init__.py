@@ -1,5 +1,5 @@
-from sqlmodel import SQLModel, Session, create_engine
-from utils import get_env
+from sqlmodel import SQLModel, Session
+from utils import get_engine, get_env
 from models import (
     avaliacao,
     categoria,
@@ -16,7 +16,7 @@ from models import (
 )
 
 DATABASE_URI = get_env('DATABASE_URI')
-engine = create_engine(DATABASE_URI, echo=False)
+engine = get_engine(url=DATABASE_URI, echo=False)
 
 
 def create_database():
