@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import SQLModel, Session, select
 from argon2 import PasswordHasher
 from database import get_session
-from models.user import Usuario
+from models.usuario import Usuario
 
 router = APIRouter(prefix='', tags=['usuários'])
 SessionDep = Annotated[Session, Depends(get_session)]
@@ -22,6 +22,14 @@ class User(SQLModel):
 @router.get('/users', response_model=Sequence[Usuario])
 def get_users(session: SessionDep):
     return session.exec(select(Usuario)).all()
+
+
+@router.get('/users/{id}', response_model=Usuario)
+def get_user(session: SessionDep, id: int):
+    user = session.get(Usuario, id)
+    if user is None:
+        raise HTTPException(status_code=404, detail='Usuário não encontrado')
+    return user
 
 
 @router.post('/users', response_model=Usuario | None)

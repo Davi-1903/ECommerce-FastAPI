@@ -27,12 +27,12 @@ class AvaliacaoInput(SQLModel):
 # --------------------------------------- Endpoints ---------------------------------------
 
 
-@router.get('/endereco', response_model=Sequence[Endereco])
-def get_endereco(session: SessionDep):
+@router.get('/enderecos', response_model=Sequence[Endereco])
+def get_enderecos(session: SessionDep):
     return session.exec(select(Endereco)).all()
 
 
-@router.get('/endereco/{endereco_id}', response_model=Endereco)
+@router.get('/enderecos/{endereco_id}', response_model=Endereco)
 def get_endereco(session: SessionDep, endereco_id: int):
     address = session.get(Endereco, endereco_id)
     if not address:
@@ -40,7 +40,7 @@ def get_endereco(session: SessionDep, endereco_id: int):
     return address
 
 
-@router.post('/endereco', response_model=Endereco)
+@router.post('/enderecos', response_model=Endereco)
 def add_endereco(session: SessionDep, endereco: EnderecoInput):
     try:
         new_endereco = Endereco(
@@ -60,7 +60,7 @@ def add_endereco(session: SessionDep, endereco: EnderecoInput):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.put('/endereco/{id}', response_model=Endereco)
+@router.put('/enderecos/{id}', response_model=Endereco)
 def edit_endereco(session: SessionDep, id: int, endereco: EnderecoInput):
     try:
         existing = session.get(Endereco, id)
@@ -80,7 +80,7 @@ def edit_endereco(session: SessionDep, id: int, endereco: EnderecoInput):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.delete('/endereco/{id}', response_model=Endereco)
+@router.delete('/enderecos/{id}', response_model=Endereco)
 def delete_endereco(session: SessionDep, id: int):
     try:
         existing = session.get(Endereco, id)

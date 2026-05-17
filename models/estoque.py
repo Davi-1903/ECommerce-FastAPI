@@ -1,6 +1,11 @@
+from __future__ import annotations
 from datetime import datetime, timezone
-from typing import Optional
-from sqlmodel import Field, SQLModel
+from typing import TYPE_CHECKING, Optional
+from sqlmodel import Field, Relationship, SQLModel
+
+
+if TYPE_CHECKING:
+    from models.produto import Produto
 
 
 class Estoque(SQLModel, table=True):
@@ -13,3 +18,5 @@ class Estoque(SQLModel, table=True):
         default_factory=lambda: datetime.now(timezone.utc),
         sa_column_kwargs={'onupdate': datetime.now(timezone.utc)},
     )
+
+    produto: Optional['Produto'] = Relationship(back_populates='estoque')

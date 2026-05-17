@@ -1,5 +1,10 @@
-from typing import Optional
-from sqlmodel import Field, SQLModel
+from __future__ import annotations
+from typing import TYPE_CHECKING, Optional
+from sqlmodel import Field, Relationship, SQLModel
+
+
+if TYPE_CHECKING:
+    from models.usuario import Usuario
 
 
 class Endereco(SQLModel, table=True):
@@ -11,3 +16,5 @@ class Endereco(SQLModel, table=True):
     cidade: str = Field(max_length=100)
     estado: str = Field(max_length=100)
     cep: str = Field(max_length=20)
+
+    usuario: Optional['Usuario'] = Relationship(back_populates='endereco')

@@ -28,7 +28,6 @@ class PagamentoInput(SQLModel):
     valor: float
     metodo: str
     status: str
-    pago_em: str | None = None
 
 
 # --------------------------------------- Endpoints ---------------------------------------
@@ -183,7 +182,6 @@ def add_pagamento(session: SessionDep, pagamento: PagamentoInput):
             valor=pagamento.valor,
             metodo=pagamento.metodo,
             status=pagamento.status,
-            pago_em=pagamento.pago_em,
         )
         session.add(new_pagamento)
         session.commit()
@@ -205,7 +203,6 @@ def edit_pagamento(session: SessionDep, id: int, pagamento: PagamentoInput):
         existing.valor = pagamento.valor
         existing.metodo = pagamento.metodo
         existing.status = pagamento.status
-        existing.pago_em = pagamento.pago_em
         session.commit()
         session.refresh(existing)
         return existing

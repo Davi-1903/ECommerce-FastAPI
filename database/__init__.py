@@ -1,4 +1,4 @@
-from sqlmodel import SQLModel, Session
+from sqlmodel import SQLModel, Session, create_engine
 from utils import get_engine, get_env
 from models import (
     avaliacao,
@@ -11,8 +11,8 @@ from models import (
     pedido,
     produto,
     produto_categoria,
+    usuario,
     usuario_papel,
-    user,
 )
 
 DATABASE_URI = get_env('DATABASE_URI')

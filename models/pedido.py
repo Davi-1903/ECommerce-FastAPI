@@ -1,6 +1,13 @@
+from __future__ import annotations
 from datetime import datetime, timezone
-from typing import Optional
-from sqlmodel import Field, SQLModel
+from typing import TYPE_CHECKING, Optional
+from sqlmodel import Field, Relationship, SQLModel
+
+
+if TYPE_CHECKING:
+    from models.usuario import Usuario
+    from models.pagamento import Pagamento
+    from models.item_pedido import ItemPedido
 
 
 class Pedido(SQLModel, table=True):
@@ -11,3 +18,7 @@ class Pedido(SQLModel, table=True):
     total: float
     status: str = Field(max_length=50)
     criado_em: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+    usuario: Optional['Usuario'] = Relationship(back_populates='pedidos')
+    pagamento: Optional['Pagamento'] = Relationship(back_populates='pedido')
+    item_pedido: Optional['ItemPedido'] = Relationship(back_populates='pedido')

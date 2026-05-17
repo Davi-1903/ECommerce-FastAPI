@@ -1,6 +1,11 @@
+from __future__ import annotations
 from datetime import datetime, timezone
-from typing import Optional
-from sqlmodel import Field, SQLModel
+from typing import TYPE_CHECKING, Optional
+from sqlmodel import Field, Relationship, SQLModel
+
+
+if TYPE_CHECKING:
+    from models.pedido import Pedido
 
 
 class Pagamento(SQLModel, table=True):
@@ -12,3 +17,5 @@ class Pagamento(SQLModel, table=True):
     metodo: str = Field(max_length=50)
     status: str = Field(max_length=50)
     pago_em: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+    pedido: Optional['Pedido'] = Relationship(back_populates='pagamento')

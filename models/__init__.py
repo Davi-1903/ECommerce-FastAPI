@@ -10,7 +10,7 @@ from . import (
     produto,
     produto_categoria,
     usuario_papel,
-    user,
+    usuario
 )
 
 __all__ = [
@@ -25,5 +25,5 @@ __all__ = [
     'produto',
     'produto_categoria',
     'usuario_papel',
-    'user',
+    'usuario',
 ]
