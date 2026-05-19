@@ -4,34 +4,34 @@
 
 ## Como executar
 
-1. **Clone o repositório:**
+1. **Clone o repositório e acesse o repositório:**
 
    ```bash
    git clone https://github.com/Davi-1903/ECommerce-FastAPI.git
-   ```
-
-2. **Acesse o diretório do projeto:**
-
-   ```bash
    cd ECommerce-FastAPI
    ```
 
-3. **Crie um arquivo `.env` com as variáveis de ambiente:**
+2. **Crie um arquivo `.env` com as variáveis de ambiente:**
 
-   ```env
-   DATABASE_URI=mysql+pymysql://root:<SENHA>@localhost:<PORTA>/db_ecommerce
+   ```.env
+   DB_HOST=localhost
+   DB_PORT=3306
+   DB_NAME=db_ecommerce
+   DB_USER=root
+   DB_PASSWORD=<SENHA>
+   DB_DRIVER=mysql+pymysql
    ```
 
-4. **Instale as dependências:**
+3. **Instale as dependências:**
 
    ```bash
    pip install -r requirements.txt
    ```
 
-5. **Execute a aplicação:**
+4. **Execute a aplicação:**
 
    ```bash
-   uvicorn main:app --reload
+   uvicorn app:app --reload
    ```
 
 > [!TIP]
