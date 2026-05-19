@@ -1,4 +1,3 @@
-from __future__ import annotations
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Optional
 from sqlmodel import Field, Relationship, SQLModel
@@ -19,6 +18,6 @@ class Pedido(SQLModel, table=True):
     status: str = Field(max_length=50)
     criado_em: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
-    usuario: Optional['Usuario'] = Relationship(back_populates='pedidos')
-    pagamento: Optional['Pagamento'] = Relationship(back_populates='pedido')
-    item_pedido: Optional['ItemPedido'] = Relationship(back_populates='pedido')
+    usuario: 'Usuario' = Relationship(back_populates='pedidos')
+    pagamento: 'Pagamento' = Relationship(back_populates='pedido')
+    item_pedido: 'ItemPedido' = Relationship(back_populates='pedido')

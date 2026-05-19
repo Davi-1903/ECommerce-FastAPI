@@ -1,4 +1,3 @@
-from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 from sqlmodel import Field, Relationship, SQLModel
 
@@ -17,4 +16,4 @@ class Endereco(SQLModel, table=True):
     estado: str = Field(max_length=100)
     cep: str = Field(max_length=20)
 
-    usuario: Optional['Usuario'] = Relationship(back_populates='endereco')
+    usuario: 'Usuario' = Relationship(back_populates='endereco')

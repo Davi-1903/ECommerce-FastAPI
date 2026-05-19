@@ -1,4 +1,3 @@
-from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 from sqlmodel import Field, Relationship, SQLModel
 
@@ -17,5 +16,5 @@ class ItemPedido(SQLModel, table=True):
     quantidade: int
     preco: float
 
-    produto: Optional['Produto'] = Relationship(back_populates='item_pedido')
-    pedido: Optional['Pedido'] = Relationship(back_populates='item_pedido')
+    produto: 'Produto' = Relationship(back_populates='item_pedido')
+    pedido: 'Pedido' = Relationship(back_populates='item_pedido')

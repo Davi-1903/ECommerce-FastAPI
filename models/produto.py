@@ -1,4 +1,3 @@
-from __future__ import annotations
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING, List, Optional
 from sqlmodel import Field, Relationship, SQLModel
@@ -10,6 +9,7 @@ if TYPE_CHECKING:
     from models.categoria import Categoria
     from models.avaliacao import Avaliacao
     from models.estoque import Estoque
+    from models.item_pedido import ItemPedido
 
 
 class Produto(SQLModel, table=True):
@@ -23,4 +23,5 @@ class Produto(SQLModel, table=True):
 
     categorias: List['Categoria'] = Relationship(back_populates='produtos', link_model=ProdutoCategoria)
     avaliacoes: List['Avaliacao'] = Relationship(back_populates='produto')
-    estoque: Optional['Estoque'] = Relationship(back_populates='produto')
+    estoque: 'Estoque' = Relationship(back_populates='produto')
+    item_pedido: List['ItemPedido'] = Relationship(back_populates='produto')

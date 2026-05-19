@@ -1,4 +1,3 @@
-from __future__ import annotations
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Optional
 from sqlmodel import Field, Relationship, SQLModel
@@ -19,4 +18,4 @@ class Estoque(SQLModel, table=True):
         sa_column_kwargs={'onupdate': datetime.now(timezone.utc)},
     )
 
-    produto: Optional['Produto'] = Relationship(back_populates='estoque')
+    produto: 'Produto' = Relationship(back_populates='estoque')

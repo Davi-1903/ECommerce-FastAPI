@@ -1,4 +1,3 @@
-from __future__ import annotations
 from datetime import datetime, timezone
 from typing import Optional, TYPE_CHECKING
 from sqlmodel import Field, Relationship, SQLModel
@@ -19,5 +18,5 @@ class Avaliacao(SQLModel, table=True):
     nota: int
     criado_em: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
-    usuario: Optional['Usuario'] = Relationship(back_populates='avaliacoes')
-    produto: Optional['Produto'] = Relationship(back_populates='avaliacoes')
+    usuario: 'Usuario' = Relationship(back_populates='avaliacoes')
+    produto: 'Produto' = Relationship(back_populates='avaliacoes')
