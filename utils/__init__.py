@@ -6,13 +6,15 @@ from sqlalchemy.exc import OperationalError
 from os import getenv
 
 
-def get_env(key: str) -> str:
+def get_env(key: str, default: str | None = None) -> str:
     load_dotenv()
 
     value = getenv(key)
-    if value is None or value == '':
-        raise RuntimeError(f'A variável de ambiente "{key}" não foi definida.')
-    return value
+    if value is not None and value != '':
+        return value
+    if default is not None:
+        return default
+    raise RuntimeError(f'A variável de ambiente "{key}" não foi definida.')
 
 
 def get_engine(**kargs) -> Engine:
@@ -24,3 +26,16 @@ def get_engine(**kargs) -> Engine:
         except OperationalError:
             sleep(3)
     raise RuntimeError('Não foi possível estabelecer uma conexão com o banco de dados')
+
+
+def create_url() -> str:
+    host = get_env('DB_HOST')
+    port = get_env('DB_PORT')
+    name = get_env('DB_NAME')
+    user = get_env('DB_USER')
+    password = get_env('DB_PASSWORD', '')
+    driver = get_env('DB_DRIVER')
+
+    if password == '':
+        return f'{driver}://{user}@{host}:{port}/{name}'
+    return f'{driver}://{user}:{password}@{host}:{port}/{name}'
