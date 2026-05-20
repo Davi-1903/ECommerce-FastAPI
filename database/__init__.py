@@ -1,4 +1,4 @@
-from sqlmodel import SQLModel, Session, create_engine
+from sqlmodel import SQLModel, Session
 from utils import create_url, get_engine
 from models import (
     avaliacao,

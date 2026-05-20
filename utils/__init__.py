@@ -7,6 +7,17 @@ from os import getenv
 
 
 def get_env(key: str, default: str | None = None) -> str:
+    '''
+    Função responsável por pegar variáveis de ambiente e verificar sua existência
+
+    :param key: Nome da variável de ambiente
+    :type key: str
+    :param default: Valor caso a variável não exista (opcional)
+    :type default: str | None
+    :return: Valor da variável ou valor default
+    :return type: str
+    '''
+
     load_dotenv()
 
     value = getenv(key)
@@ -18,6 +29,14 @@ def get_env(key: str, default: str | None = None) -> str:
 
 
 def get_engine(**kargs) -> Engine:
+    '''
+    Função responsável por tentar estabelecer uma conexão com banco de dados. Ele fará 10 tentativas de estabelecer uma conexão, caso falhe, ele esperará 3 segundos. Com o término das 10 tentativas será lançado um erro `RuntimeError`
+
+    :param **kargs: Parâmetros de `create_engine` do [SQLModel](https://sqlmodel.tiangolo.com/);
+    :return: engine do banco de dados
+    :return type: Engine
+    '''
+
     for _ in range(10):
         try:
             engine = create_engine(**kargs)
@@ -29,6 +48,13 @@ def get_engine(**kargs) -> Engine:
 
 
 def create_url() -> str:
+    '''
+    Função responsável por pegar variáveis de ambiente e montar URL para o banco de dados
+
+    :return: URL para o banco de dados
+    :return type: str
+    '''
+    
     host = get_env('DB_HOST')
     port = get_env('DB_PORT')
     name = get_env('DB_NAME')
