@@ -35,8 +35,9 @@ class EstoqueInput(SQLModel):
 
 
 @router.get('/produtos', response_model=Sequence[Produto])
-def get_produtos(session: SessionDep):
-    return session.exec(select(Produto)).all()
+def get_produtos(session: SessionDep, cursor: int, limit: int):
+    statement = select(Produto).offset(cursor).limit(limit)
+    return session.exec(statement).all()
 
 
 @router.get('/produtos/{id}', response_model=Produto)
@@ -97,8 +98,9 @@ def delete_produto(session: SessionDep, id: int):
 
 
 @router.get('/categorias', response_model=Sequence[Categoria])
-def get_categorias(session: SessionDep):
-    return session.exec(select(Categoria)).all()
+def get_categorias(session: SessionDep, cursor: int, limit: int):
+    statement = select(Categoria).offset(cursor).limit(limit)
+    return session.exec(statement).all()
 
 
 @router.get('/categorias/{id}', response_model=Categoria)
@@ -155,8 +157,9 @@ def delete_categoria(session: SessionDep, id: int):
 
 
 @router.get('/produto-categorias', response_model=Sequence[ProdutoCategoria])
-def get_produto_categorias(session: SessionDep):
-    return session.exec(select(ProdutoCategoria)).all()
+def get_produto_categorias(session: SessionDep, cursor: int, limit: int):
+    statement = select(ProdutoCategoria).offset(cursor).limit(limit)
+    return session.exec(statement).all()
 
 
 @router.post('/produto-categorias', response_model=ProdutoCategoria)
@@ -178,9 +181,7 @@ def add_produto_categoria(session: SessionDep, relation: ProdutoCategoriaInput):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.delete(
-    '/produto-categorias/{produto_id}/{categoria_id}', response_model=ProdutoCategoria
-)
+@router.delete('/produto-categorias/{produto_id}/{categoria_id}', response_model=ProdutoCategoria)
 def delete_produto_categoria(session: SessionDep, produto_id: int, categoria_id: int):
     try:
         relation = session.get(ProdutoCategoria, (produto_id, categoria_id))
@@ -198,8 +199,9 @@ def delete_produto_categoria(session: SessionDep, produto_id: int, categoria_id:
 
 
 @router.get('/estoque', response_model=Sequence[Estoque])
-def get_estoque(session: SessionDep):
-    return session.exec(select(Estoque)).all()
+def get_estoque(session: SessionDep, cursor: int, limit: int):
+    statement = select(Estoque).offset(cursor).limit(limit)
+    return session.exec(statement).all()
 
 
 @router.get('/estoque/{estoque_id}', response_model=Estoque)

@@ -28,8 +28,9 @@ class AvaliacaoInput(SQLModel):
 
 
 @router.get('/enderecos', response_model=Sequence[Endereco])
-def get_enderecos(session: SessionDep):
-    return session.exec(select(Endereco)).all()
+def get_enderecos(session: SessionDep, cursor: int, limit: int):
+    statement = select(Endereco).offset(cursor).limit(limit)
+    return session.exec(statement).all()
 
 
 @router.get('/enderecos/{endereco_id}', response_model=Endereco)
@@ -96,8 +97,9 @@ def delete_endereco(session: SessionDep, id: int):
 
 
 @router.get('/reviews', response_model=Sequence[Avaliacao])
-def get_reviews(session: SessionDep):
-    return session.exec(select(Avaliacao)).all()
+def get_reviews(session: SessionDep, cursor: int, limit: int):
+    statement = select(Avaliacao).offset(cursor).limit(limit)
+    return session.exec(statement).all()
 
 
 @router.get('/reviews/{id}', response_model=Avaliacao)

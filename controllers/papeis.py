@@ -22,8 +22,9 @@ class UsuarioPapelInput(SQLModel):
 
 
 @router.get('/papeis', response_model=Sequence[Papel])
-def get_papeis(session: SessionDep):
-    return session.exec(select(Papel)).all()
+def get_papeis(session: SessionDep, cursor: int, limit: int):
+    statement = select(Papel).offset(cursor).limit(limit)
+    return session.exec(statement).all()
 
 
 @router.get('/papeis/{id}', response_model=Papel)
@@ -80,8 +81,9 @@ def delete_papel(session: SessionDep, id: int):
 
 
 @router.get('/user-papeis', response_model=Sequence[UsuarioPapel])
-def get_user_papeis(session: SessionDep):
-    return session.exec(select(UsuarioPapel)).all()
+def get_user_papeis(session: SessionDep, cursor: int, limit: int):
+    statemente = select(UsuarioPapel).offset(cursor).limit(limit)
+    return session.exec(statemente).all()
 
 
 @router.post('/user-papeis', response_model=UsuarioPapel)

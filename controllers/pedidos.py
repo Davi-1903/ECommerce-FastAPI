@@ -34,8 +34,9 @@ class PagamentoInput(SQLModel):
 
 
 @router.get('/pedidos', response_model=Sequence[Pedido])
-def get_pedidos(session: SessionDep):
-    return session.exec(select(Pedido)).all()
+def get_pedidos(session: SessionDep, cursor: int, limit: int):
+    statement = select(Pedido).offset(cursor).limit(limit)
+    return session.exec(statement).all()
 
 
 @router.get('/pedidos/{id}', response_model=Pedido)
@@ -96,8 +97,9 @@ def delete_pedido(session: SessionDep, id: int):
 
 
 @router.get('/pedidos-items', response_model=Sequence[ItemPedido])
-def get_pedido_items(session: SessionDep):
-    return session.exec(select(ItemPedido)).all()
+def get_pedido_items(session: SessionDep, cursor: int, limit: int):
+    statement = select(ItemPedido).offset(cursor).limit(limit)
+    return session.exec(statement).all()
 
 
 @router.get('/pedidos-items/{id}', response_model=ItemPedido)
@@ -162,8 +164,9 @@ def delete_pedido_item(session: SessionDep, id: int):
 
 
 @router.get('/pagamentos', response_model=Sequence[Pagamento])
-def get_pagamentos(session: SessionDep):
-    return session.exec(select(Pagamento)).all()
+def get_pagamentos(session: SessionDep, cursor: int, limit: int):
+    statement = select(Pagamento).offset(cursor).limit(limit)
+    return session.exec(statement).all()
 
 
 @router.get('/pagamentos/{id}', response_model=Pagamento)

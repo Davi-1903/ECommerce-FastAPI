@@ -20,8 +20,9 @@ class User(SQLModel):
 
 
 @router.get('/users', response_model=Sequence[Usuario])
-def get_users(session: SessionDep):
-    return session.exec(select(Usuario)).all()
+def get_users(session: SessionDep, cursor: int, limit: int):
+    statement = select(Usuario).offset(cursor).limit(limit)
+    return session.exec(statement).all()
 
 
 @router.get('/users/{id}', response_model=Usuario)
