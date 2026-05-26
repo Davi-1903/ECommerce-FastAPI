@@ -5,7 +5,7 @@ from database import get_session
 from models.papel import Papel
 from models.usuario_papel import UsuarioPapel
 
-router = APIRouter(prefix='', tags=['papeis'])
+router = APIRouter(prefix='/papeis', tags=['papeis'])
 SessionDep = Annotated[Session, Depends(get_session)]
 
 
@@ -21,13 +21,13 @@ class UsuarioPapelInput(SQLModel):
 # --------------------------------------- Endpoints ---------------------------------------
 
 
-@router.get('/papeis', response_model=Sequence[Papel])
+@router.get('/', response_model=Sequence[Papel])
 def get_papeis(session: SessionDep, cursor: int, limit: int):
     statement = select(Papel).offset(cursor).limit(limit)
     return session.exec(statement).all()
 
 
-@router.get('/papeis/{id}', response_model=Papel)
+@router.get('/{id}', response_model=Papel)
 def get_papel(session: SessionDep, id: int):
     papel = session.get(Papel, id)
     if not papel:
@@ -35,7 +35,7 @@ def get_papel(session: SessionDep, id: int):
     return papel
 
 
-@router.post('/papeis', response_model=Papel)
+@router.post('/', response_model=Papel)
 def add_papel(session: SessionDep, papel: PapelInput):
     try:
         new_papel = Papel(nome=papel.nome)
@@ -49,7 +49,7 @@ def add_papel(session: SessionDep, papel: PapelInput):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.put('/papeis/{id}', response_model=Papel)
+@router.put('/{id}', response_model=Papel)
 def edit_papel(session: SessionDep, id: int, papel: PapelInput):
     try:
         existing = session.get(Papel, id)
@@ -65,7 +65,7 @@ def edit_papel(session: SessionDep, id: int, papel: PapelInput):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.delete('/papeis/{id}', response_model=Papel)
+@router.delete('/{id}', response_model=Papel)
 def delete_papel(session: SessionDep, id: int):
     try:
         existing = session.get(Papel, id)
@@ -80,13 +80,13 @@ def delete_papel(session: SessionDep, id: int):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get('/user-papeis', response_model=Sequence[UsuarioPapel])
+@router.get('/usuario', response_model=Sequence[UsuarioPapel])
 def get_user_papeis(session: SessionDep, cursor: int, limit: int):
     statemente = select(UsuarioPapel).offset(cursor).limit(limit)
     return session.exec(statemente).all()
 
 
-@router.post('/user-papeis', response_model=UsuarioPapel)
+@router.post('/usuario', response_model=UsuarioPapel)
 def add_user_papel(session: SessionDep, relation: UsuarioPapelInput):
     try:
         new_relation = UsuarioPapel(
@@ -106,7 +106,7 @@ def add_user_papel(session: SessionDep, relation: UsuarioPapelInput):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.delete('/user-papeis/{usuario_id}/{papel_id}', response_model=UsuarioPapel)
+@router.delete('/usuario/{usuario_id}/{papel_id}', response_model=UsuarioPapel)
 def delete_user_papel(session: SessionDep, usuario_id: int, papel_id: int):
     try:
         relation = session.get(UsuarioPapel, (usuario_id, papel_id))

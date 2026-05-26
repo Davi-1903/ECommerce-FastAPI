@@ -2,7 +2,10 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from database import create_database
 
-from controllers import catalogo, endereco, papeis, pedidos, usuarios
+from controllers import (
+    avaliacoes, categorias, enderecos, estoque,
+    pagamentos, papeis, pedidos, produtos, usuarios
+)
 
 
 @asynccontextmanager
@@ -15,6 +18,10 @@ app = FastAPI(lifespan=lifespan)
 
 app.include_router(usuarios.router)
 app.include_router(papeis.router)
-app.include_router(catalogo.router)
+app.include_router(produtos.router)
 app.include_router(pedidos.router)
-app.include_router(endereco.router)
+app.include_router(enderecos.router)
+app.include_router(avaliacoes.router)
+app.include_router(categorias.router)
+app.include_router(pagamentos.router)
+app.include_router(estoque.router)

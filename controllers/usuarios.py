@@ -5,7 +5,7 @@ from argon2 import PasswordHasher
 from database import get_session
 from models.usuario import Usuario
 
-router = APIRouter(prefix='', tags=['usuários'])
+router = APIRouter(prefix='/usuarios', tags=['usuários'])
 SessionDep = Annotated[Session, Depends(get_session)]
 ph = PasswordHasher()
 
@@ -19,13 +19,13 @@ class User(SQLModel):
 # --------------------------------------- Endpoints ---------------------------------------
 
 
-@router.get('/users', response_model=Sequence[Usuario])
-def get_users(session: SessionDep, cursor: int, limit: int):
+@router.get('/', response_model=Sequence[Usuario])
+def get_(session: SessionDep, cursor: int, limit: int):
     statement = select(Usuario).offset(cursor).limit(limit)
     return session.exec(statement).all()
 
 
-@router.get('/users/{id}', response_model=Usuario)
+@router.get('/{id}', response_model=Usuario)
 def get_user(session: SessionDep, id: int):
     user = session.get(Usuario, id)
     if user is None:
@@ -33,7 +33,7 @@ def get_user(session: SessionDep, id: int):
     return user
 
 
-@router.post('/users', response_model=Usuario | None)
+@router.post('/', response_model=Usuario | None)
 def add_user(session: SessionDep, user: User):
     try:
         new_user = Usuario(
@@ -51,7 +51,7 @@ def add_user(session: SessionDep, user: User):
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@router.put('/users', response_model=Usuario)
+@router.put('/', response_model=Usuario)
 def edit_user(session: SessionDep, id: int, new_user: User):
     try:
         user = session.get(Usuario, id)
@@ -68,7 +68,7 @@ def edit_user(session: SessionDep, id: int, new_user: User):
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@router.delete('/users', response_model=Usuario | None)
+@router.delete('/', response_model=Usuario | None)
 def delete_user(session: SessionDep, id: int):
     try:
         user = session.get(Usuario, id)

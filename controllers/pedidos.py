@@ -4,9 +4,8 @@ from sqlmodel import SQLModel, Session, select
 from database import get_session
 from models.pedido import Pedido
 from models.item_pedido import ItemPedido
-from models.pagamento import Pagamento
 
-router = APIRouter(prefix='', tags=['pedidos'])
+router = APIRouter(prefix='/pedidos', tags=['pedidos'])
 SessionDep = Annotated[Session, Depends(get_session)]
 
 
@@ -23,23 +22,16 @@ class ItemPedidoInput(SQLModel):
     preco: float
 
 
-class PagamentoInput(SQLModel):
-    pedido_id: int
-    valor: float
-    metodo: str
-    status: str
-
-
 # --------------------------------------- Endpoints ---------------------------------------
 
 
-@router.get('/pedidos', response_model=Sequence[Pedido])
+@router.get('/', response_model=Sequence[Pedido])
 def get_pedidos(session: SessionDep, cursor: int, limit: int):
     statement = select(Pedido).offset(cursor).limit(limit)
     return session.exec(statement).all()
 
 
-@router.get('/pedidos/{id}', response_model=Pedido)
+@router.get('/{id}', response_model=Pedido)
 def get_pedido(session: SessionDep, id: int):
     pedido = session.get(Pedido, id)
     if not pedido:
@@ -47,7 +39,7 @@ def get_pedido(session: SessionDep, id: int):
     return pedido
 
 
-@router.post('/pedidos', response_model=Pedido)
+@router.post('/', response_model=Pedido)
 def add_pedido(session: SessionDep, pedido: PedidoInput):
     try:
         new_pedido = Pedido(
@@ -63,7 +55,7 @@ def add_pedido(session: SessionDep, pedido: PedidoInput):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.put('/pedidos/{id}', response_model=Pedido)
+@router.put('/{id}', response_model=Pedido)
 def edit_pedido(session: SessionDep, id: int, pedido: PedidoInput):
     try:
         existing = session.get(Pedido, id)
@@ -81,7 +73,7 @@ def edit_pedido(session: SessionDep, id: int, pedido: PedidoInput):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.delete('/pedidos/{id}', response_model=Pedido)
+@router.delete('/{id}', response_model=Pedido)
 def delete_pedido(session: SessionDep, id: int):
     try:
         existing = session.get(Pedido, id)
@@ -96,13 +88,13 @@ def delete_pedido(session: SessionDep, id: int):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get('/pedidos-items', response_model=Sequence[ItemPedido])
+@router.get('/items', response_model=Sequence[ItemPedido])
 def get_pedido_items(session: SessionDep, cursor: int, limit: int):
     statement = select(ItemPedido).offset(cursor).limit(limit)
     return session.exec(statement).all()
 
 
-@router.get('/pedidos-items/{id}', response_model=ItemPedido)
+@router.get('/items/{id}', response_model=ItemPedido)
 def get_pedido_item(session: SessionDep, id: int):
     item = session.get(ItemPedido, id)
     if not item:
@@ -110,7 +102,7 @@ def get_pedido_item(session: SessionDep, id: int):
     return item
 
 
-@router.post('/pedidos-items', response_model=ItemPedido)
+@router.post('/items', response_model=ItemPedido)
 def add_pedido_item(session: SessionDep, item: ItemPedidoInput):
     try:
         new_item = ItemPedido(
@@ -129,7 +121,7 @@ def add_pedido_item(session: SessionDep, item: ItemPedidoInput):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.put('/pedidos-items/{id}', response_model=ItemPedido)
+@router.put('/items/{id}', response_model=ItemPedido)
 def edit_pedido_item(session: SessionDep, id: int, item: ItemPedidoInput):
     try:
         existing = session.get(ItemPedido, id)
@@ -148,79 +140,12 @@ def edit_pedido_item(session: SessionDep, id: int, item: ItemPedidoInput):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.delete('/pedidos-items/{id}', response_model=ItemPedido)
+@router.delete('/items/{id}', response_model=ItemPedido)
 def delete_pedido_item(session: SessionDep, id: int):
     try:
         existing = session.get(ItemPedido, id)
         if not existing:
             raise HTTPException(status_code=404, detail='Item de pedido não encontrado')
-        session.delete(existing)
-        session.commit()
-        return existing
-
-    except Exception as e:
-        session.rollback()
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@router.get('/pagamentos', response_model=Sequence[Pagamento])
-def get_pagamentos(session: SessionDep, cursor: int, limit: int):
-    statement = select(Pagamento).offset(cursor).limit(limit)
-    return session.exec(statement).all()
-
-
-@router.get('/pagamentos/{id}', response_model=Pagamento)
-def get_pagamento(session: SessionDep, id: int):
-    pagamento = session.get(Pagamento, id)
-    if not pagamento:
-        raise HTTPException(status_code=404, detail='Pagamento não encontrado')
-    return pagamento
-
-
-@router.post('/pagamentos', response_model=Pagamento)
-def add_pagamento(session: SessionDep, pagamento: PagamentoInput):
-    try:
-        new_pagamento = Pagamento(
-            pedido_id=pagamento.pedido_id,
-            valor=pagamento.valor,
-            metodo=pagamento.metodo,
-            status=pagamento.status,
-        )
-        session.add(new_pagamento)
-        session.commit()
-        session.refresh(new_pagamento)
-        return new_pagamento
-
-    except Exception as e:
-        session.rollback()
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@router.put('/pagamentos/{id}', response_model=Pagamento)
-def edit_pagamento(session: SessionDep, id: int, pagamento: PagamentoInput):
-    try:
-        existing = session.get(Pagamento, id)
-        if not existing:
-            raise HTTPException(status_code=404, detail='Pagamento não encontrado')
-        existing.pedido_id = pagamento.pedido_id
-        existing.valor = pagamento.valor
-        existing.metodo = pagamento.metodo
-        existing.status = pagamento.status
-        session.commit()
-        session.refresh(existing)
-        return existing
-
-    except Exception as e:
-        session.rollback()
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@router.delete('/pagamentos/{id}', response_model=Pagamento)
-def delete_pagamento(session: SessionDep, id: int):
-    try:
-        existing = session.get(Pagamento, id)
-        if not existing:
-            raise HTTPException(status_code=404, detail='Pagamento não encontrado')
         session.delete(existing)
         session.commit()
         return existing
