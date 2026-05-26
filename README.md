@@ -25,7 +25,7 @@
 
    ```bash
    uv sync
-   # ----------- or -----------
+   # ----------- ou -----------
    pip install -r requirements.txt
    ```
 

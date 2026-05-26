@@ -22,9 +22,9 @@ def get_estoque(session: SessionDep, cursor: int, limit: int):
     return session.exec(statement).all()
 
 
-@router.get('/{estoque_id}', response_model=Estoque)
-def get_estoque_item(session: SessionDep, estoque_id: int):
-    estoque = session.get(Estoque, estoque_id)
+@router.get('/{id}', response_model=Estoque)
+def get_estoque_item(session: SessionDep, id: int):
+    estoque = session.get(Estoque, id)
     if not estoque:
         raise HTTPException(
             status_code=404, detail='Registro de estoque não encontrado'

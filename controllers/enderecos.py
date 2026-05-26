@@ -25,9 +25,9 @@ def get_enderecos(session: SessionDep, cursor: int, limit: int):
     return session.exec(statement).all()
 
 
-@router.get('/{endereco_id}', response_model=Endereco)
-def get_endereco(session: SessionDep, endereco_id: int):
-    address = session.get(Endereco, endereco_id)
+@router.get('/{id}', response_model=Endereco)
+def get_endereco(session: SessionDep, id: int):
+    address = session.get(Endereco, id)
     if not address:
         raise HTTPException(status_code=404, detail='Endereço não encontrado')
     return address
