@@ -19,12 +19,13 @@
    DB_NAME=db_ecommerce
    DB_USER=root
    DB_PASSWORD=<SENHA>
-   DB_DRIVER=mysql+pymysql
    ```
 
 3. **Instale as dependências:**
 
    ```bash
+   uv sync
+   # ----------- or -----------
    pip install -r requirements.txt
    ```
 
