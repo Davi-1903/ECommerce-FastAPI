@@ -14,11 +14,16 @@
 2. **Crie um arquivo `.env` com as variáveis de ambiente:**
 
    ```.env
+   # ========================< Autenticaçãp >========================
+   SECRET_KEY=<CHAVE_SECRETA>
+   ALGORITHM=HS256
+
+   # =======================< Banco de dados >=======================
+   DB_USER=root
+   DB_PASSWORD=<SENHA>
    DB_HOST=localhost
    DB_PORT=3306
    DB_NAME=db_ecommerce
-   DB_USER=root
-   DB_PASSWORD=<SENHA>
    ```
 
 3. **Instale as dependências:**

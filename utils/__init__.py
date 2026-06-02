@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta, timezone
 from time import sleep
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
@@ -6,6 +7,7 @@ from sqlmodel import create_engine
 from sqlalchemy import Engine
 from sqlalchemy.exc import OperationalError
 from os import getenv
+from jwt import encode
 
 
 ph = PasswordHasher()
@@ -100,3 +102,19 @@ def verify_hash(hash: str, password: str) -> bool:
         return ph.verify(hash, password)
     except VerifyMismatchError:
         return False
+
+
+def create_access_token(data: dict) -> str:
+    '''
+    Função responsável por criar o token de acesso
+
+    :param data: dicionário com chave `sub`
+    :type data: dict
+    :return: token de acesso
+    :type return: str
+    '''
+    
+    to_encode = data.copy()
+    expire = datetime.now(timezone.utc) + timedelta(minutes=30)
+    to_encode.update({'exp': expire})
+    return encode(to_encode, get_env('SECRET_KEY'), algorithm=get_env('ALGORITHM'))

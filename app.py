@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from database import create_database
 
 from controllers import (
-    avaliacoes, categorias, enderecos, estoque,
+    auth, avaliacoes, categorias, enderecos, estoque,
     pagamentos, papeis, pedidos, produtos, usuarios
 )
 
@@ -25,3 +25,4 @@ app.include_router(avaliacoes.router)
 app.include_router(categorias.router)
 app.include_router(pagamentos.router)
 app.include_router(estoque.router)
+app.include_router(auth.router)

@@ -58,7 +58,7 @@ def edit_user(session: SessionDep, id: int, new_user: User):
             raise HTTPException(status_code=404, detail='Usuário não encontrado')
         user.nome = new_user.nome
         user.email = new_user.email
-        user.senha_hash = new_user.senha
+        user.senha_hash = create_hash(new_user.senha)
         session.commit()
         return user
 
