@@ -1,6 +1,7 @@
 from typing import Annotated, Sequence
 from fastapi import APIRouter, Depends, HTTPException
-from sqlmodel import SQLModel, Session, select
+from sqlmodel import Session, select
+from pydantic import BaseModel, EmailStr
 from database import get_session
 from models.usuario import Usuario
 from utils import create_hash
@@ -9,9 +10,9 @@ router = APIRouter(prefix='/usuarios', tags=['usuários'])
 SessionDep = Annotated[Session, Depends(get_session)]
 
 
-class User(SQLModel):
+class UserInput(BaseModel):
     nome: str
-    email: str
+    email: EmailStr
     senha: str
 
 
@@ -33,7 +34,7 @@ def get_user(session: SessionDep, id: int):
 
 
 @router.post('/', response_model=Usuario | None)
-def add_user(session: SessionDep, user: User):
+def add_user(session: SessionDep, user: UserInput):
     try:
         new_user = Usuario(
             nome=user.nome,
@@ -51,7 +52,7 @@ def add_user(session: SessionDep, user: User):
 
 
 @router.put('/', response_model=Usuario)
-def edit_user(session: SessionDep, id: int, new_user: User):
+def edit_user(session: SessionDep, id: int, new_user: UserInput):
     try:
         user = session.get(Usuario, id)
         if user is None:

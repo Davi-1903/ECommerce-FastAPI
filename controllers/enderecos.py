@@ -1,6 +1,7 @@
 from typing import Annotated, Sequence
 from fastapi import APIRouter, Depends, HTTPException
-from sqlmodel import SQLModel, Session, select
+from sqlmodel import Session, select
+from pydantic import BaseModel
 from database import get_session
 from models.endereco import Endereco
 
@@ -8,7 +9,7 @@ router = APIRouter(prefix='/enderecos', tags=['endereços'])
 SessionDep = Annotated[Session, Depends(get_session)]
 
 
-class EnderecoInput(SQLModel):
+class EnderecoInput(BaseModel):
     usuario_id: int
     rua: str
     cidade: str

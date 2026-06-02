@@ -1,6 +1,7 @@
 from typing import Annotated, Sequence
 from fastapi import APIRouter, Depends, HTTPException
-from sqlmodel import SQLModel, Session, select
+from sqlmodel import Session, select
+from pydantic import BaseModel
 from database import get_session
 from models.produto import Produto
 from models.produto_categoria import ProdutoCategoria
@@ -9,13 +10,13 @@ router = APIRouter(prefix='/produtos', tags=['produtos'])
 SessionDep = Annotated[Session, Depends(get_session)]
 
 
-class ProdutoInput(SQLModel):
+class ProdutoInput(BaseModel):
     nome: str
     descricao: str | None = None
     preco: float
 
 
-class ProdutoCategoriaInput(SQLModel):
+class ProdutoCategoriaInput(BaseModel):
     produto_id: int
     categoria_id: int
 

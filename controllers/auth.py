@@ -1,8 +1,8 @@
-from dataclasses import dataclass
 from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlmodel import Session, select
+from pydantic import BaseModel
 from database import get_session
 from models.usuario import Usuario
 from utils import create_access_token, get_env, verify_hash
@@ -14,8 +14,7 @@ SessionDep = Annotated[Session, Depends(get_session)]
 token_schema = OAuth2PasswordBearer(tokenUrl='token')
 
 
-@dataclass
-class Token:
+class Token(BaseModel):
     access_token: str
     token_type: str
 
