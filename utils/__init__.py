@@ -1,9 +1,14 @@
 from time import sleep
+from argon2 import PasswordHasher
+from argon2.exceptions import VerifyMismatchError
 from dotenv import load_dotenv
 from sqlmodel import create_engine
 from sqlalchemy import Engine
 from sqlalchemy.exc import OperationalError
 from os import getenv
+
+
+ph = PasswordHasher()
 
 
 def get_env(key: str, default: str | None = None) -> str:
@@ -64,3 +69,34 @@ def create_url() -> str:
     if password == '':
         return f'mysql+pymysql://{user}@{host}:{port}/{name}'
     return f'mysql+pymysql://{user}:{password}@{host}:{port}/{name}'
+
+
+def create_hash(password: str) -> str:
+    '''
+    Função responsável por criar um hash a partir de uma senha, usando Argon2
+
+    :param password: Senha
+    :type password: str
+    :return: Hash
+    :type return: str
+    '''
+    
+    return ph.hash(password)
+
+
+def verify_hash(hash: str, password: str) -> bool:
+    '''
+    Função responsável por verificar o hash e uma senha
+
+    :param hash: Hash do banco
+    :type hash: str
+    :param password: senha do usuário
+    :type password: str
+    :return: Retorna `True` caso a senha corresponda ao hash, caso contrário `False`
+    :type return: bool
+    '''
+    
+    try:
+        return ph.verify(hash, password)
+    except VerifyMismatchError:
+        return False
