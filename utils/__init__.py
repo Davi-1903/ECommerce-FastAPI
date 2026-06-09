@@ -1,16 +1,13 @@
 from datetime import datetime, timedelta, timezone
 from time import sleep
-from argon2 import PasswordHasher
-from argon2.exceptions import VerifyMismatchError
 from dotenv import load_dotenv
+from fastapi import HTTPException
 from sqlmodel import create_engine
 from sqlalchemy import Engine
 from sqlalchemy.exc import OperationalError
 from os import getenv
-from jwt import encode
-
-
-ph = PasswordHasher()
+from jwt import encode, decode
+from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
 
 
 def get_env(key: str, default: str | None = None) -> str:
@@ -73,37 +70,6 @@ def create_url() -> str:
     return f'mysql+pymysql://{user}:{password}@{host}:{port}/{name}'
 
 
-def create_hash(password: str) -> str:
-    '''
-    Função responsável por criar um hash a partir de uma senha, usando Argon2
-
-    :param password: Senha
-    :type password: str
-    :return: Hash
-    :type return: str
-    '''
-    
-    return ph.hash(password)
-
-
-def verify_hash(hash: str, password: str) -> bool:
-    '''
-    Função responsável por verificar o hash e uma senha
-
-    :param hash: Hash do banco
-    :type hash: str
-    :param password: senha do usuário
-    :type password: str
-    :return: Retorna `True` caso a senha corresponda ao hash, caso contrário `False`
-    :type return: bool
-    '''
-    
-    try:
-        return ph.verify(hash, password)
-    except VerifyMismatchError:
-        return False
-
-
 def create_access_token(data: dict) -> str:
     '''
     Função responsável por criar o token de acesso
@@ -118,3 +84,26 @@ def create_access_token(data: dict) -> str:
     expire = datetime.now(timezone.utc) + timedelta(minutes=30)
     to_encode.update({'exp': expire})
     return encode(to_encode, get_env('SECRET_KEY'), algorithm=get_env('ALGORITHM'))
+
+
+def decode_access_token(token: str) -> str:
+    '''
+    Função responsável por decodificar o token de acesso
+
+    :param token: token JWT
+    :type token: str
+    :return: dicionário com chave `sub`
+    :rtype: str
+    '''
+
+    try:
+        payload = decode(token, get_env('SECRET_KEY'), algorithms=[get_env('ALGORITHM')])
+    except ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail='Token expirado')
+    except InvalidTokenError:
+        raise HTTPException(status_code=401, detail='Token inválido')
+
+    user_id = payload.get('sub')
+    if user_id is None:
+        raise HTTPException(status_code=401, detail='Token inválido')
+    return str(user_id)

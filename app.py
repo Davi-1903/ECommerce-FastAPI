@@ -4,7 +4,7 @@ from database import create_database
 
 from routes import (
     auth, avaliacoes, categorias, enderecos, estoque,
-    pagamentos, papeis, pedidos, produtos, usuarios
+    pagamentos, papeis, pedidos, produtos
 )
 
 
@@ -16,7 +16,6 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-app.include_router(usuarios.router)
 app.include_router(papeis.router)
 app.include_router(produtos.router)
 app.include_router(pedidos.router)
