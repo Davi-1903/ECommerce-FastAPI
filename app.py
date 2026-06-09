@@ -1,8 +1,8 @@
-from contextlib import asynccontextmanager
 from fastapi import FastAPI
+from contextlib import asynccontextmanager
 from database import create_database
 
-from controllers import (
+from routes import (
     auth, avaliacoes, categorias, enderecos, estoque,
     pagamentos, papeis, pedidos, produtos, usuarios
 )
